@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('age');
             $table->string('job');
             $table->string('salary');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

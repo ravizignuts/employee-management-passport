@@ -32,7 +32,7 @@ class EmployeeController extends Controller
      * @param Request $request,$id
      * @return json data
      */
-    public function edit(Request $request, $id)
+    public function edit(Request $request,$id)
     {
         $this->validate($request, [
             'name'   => 'required|string',
@@ -40,7 +40,8 @@ class EmployeeController extends Controller
             'job'    => 'required|string',
             'salary' => 'required|string'
         ]);
-        $employee = Employee::findOrFail($id);
+        //$employee = Employee::findOrFail($id);
+        $employee = Employee::where('age');
         $employee->update($request->only('name', 'age', 'job', 'salary'));
         return response()->json([
             'data'    => $employee,
@@ -52,10 +53,14 @@ class EmployeeController extends Controller
      * @param Request $request,$id
      * @return json data
      */
-    public function delete($request,$id)
+    public function delete(Request $request,$id)
     {
         $employee = Employee::findOrFail($id);
-        $employee->delete;
+        if($request->softdelete == "softdelete"){
+            $employee->delete();
+        }else{
+            $employee->forcedelete();
+        }
         return response()->json([
             'data'    => $employee,
             'message' => 'Employee Deleted Successfully'
@@ -68,6 +73,12 @@ class EmployeeController extends Controller
      */
     public function restore($id)
     {
+        $employee = Employee::withTrashed()->findOrFail($id);
+        $employee->restore();
+        return response()->json([
+            'data'    => $employee,
+            'message' => 'Employee Restored Successfully'
+        ]);
     }
     /**
      * API For view Employee
@@ -89,7 +100,7 @@ class EmployeeController extends Controller
      */
     public function list()
     {
-        $employee = Employee::get();
+        $employee = Employee::paginate(5);
         return response()->json([
             'data'    => $employee,
             'message' => 'Employee Record'

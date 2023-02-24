@@ -24,9 +24,10 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:api')->group(function () {
         Route::controller(EmployeeController::class)->prefix('employee')->group(function () {
             Route::post('add', 'add');
-            Route::put('edit{$id}', 'edit');
-            Route::delete('delete{$id}', 'delete');
-            Route::get('view{$id}', 'view');
+            Route::put('edit/{id}', 'edit');
+            Route::delete('delete/{id}', 'delete');
+            Route::patch('restore/{id}', 'restore');
+            Route::get('view/{id}', 'view');
             Route::get('/', 'list');
         });
     });
